@@ -27,8 +27,8 @@ jobs:
 
       - name: Build and Push Docker image
         run: |
-          docker build -t ${{ secrets.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} .
-          docker push ${{ secrets.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker build -t "${{ secrets.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}" .
+          docker push "${{ secrets.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}"
 
       - name: Set AKS Context
         uses: azure/aks-set-context@v1
@@ -36,15 +36,6 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           resource-group: ${{ secrets.RESOURCE_GROUP }}
           cluster-name: ${{ secrets.CLUSTER_NAME }}
-
-      - name: Create K8s Secret for ACR
-        uses: azure/k8s-create-secret@v1
-        with:
-          container-registry-url: ${{ secrets.ACR_NAME }}.azurecr.io
-          container-registry-username: ${{ secrets.ACR_NAME }} # Valid when using admin-enabled ACR or SP
-          container-registry-password: ${{ secrets.ACR_PASSWORD }} # Placeholder, strictly we rely on attach-acr usually, but let's stick to simple
-        id: create-secret
-        continue-on-error: true # Often fail if secret exists or using attach-acr method
 
       - name: Deploy to AKS
         uses: azure/k8s-deploy@v1
