@@ -1,0 +1,4 @@
+flask
+gunicorn
+opencensus-ext-azure
+opencensus-ext-flask
